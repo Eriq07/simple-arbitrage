@@ -5,15 +5,16 @@ import { UniswappyV2EthPair } from "./UniswappyV2EthPair";
 import { FACTORY_ADDRESSES } from "./addresses";
 import { Arbitrage } from "./Arbitrage";
 import { get } from "https"
+//import { Contract, providers, Wallet } from "ethers";
 
-const ETHEREUM_RPC_URL = process.env.ETHEREUM_RPC_URL || "http://127.0.0.1:8545"
+const ETHEREUM_RPC_URL = "https://mainnet.infura.io/v3/f5bab68a41fd40cbaac71c9b4ae79499"; //process.env.ETHEREUM_RPC_URL;//|| "http://127.0.0.1:8545"
 const PRIVATE_KEY = process.env.PRIVATE_KEY || ""
-const BUNDLE_EXECUTOR_ADDRESS = process.env.BUNDLE_EXECUTOR_ADDRESS || ""
+const BUNDLE_EXECUTOR_ADDRESS = process.env.BUNDLE_EXECUTOR_ADDRESS || "";
 const FLASHBOTS_KEY_ID = process.env.FLASHBOTS_KEY_ID || "";
 const FLASHBOTS_SECRET = process.env.FLASHBOTS_SECRET || "";
 
 const MINER_REWARD_PERCENTAGE = parseInt(process.env.MINER_REWARD_PERCENTAGE || "80")
-
+/*
 if (PRIVATE_KEY === "") {
   console.warn("Must provide PRIVATE_KEY environment variable")
   process.exit(1)
@@ -25,7 +26,7 @@ if (BUNDLE_EXECUTOR_ADDRESS === "") {
 if (FLASHBOTS_KEY_ID === "" || FLASHBOTS_SECRET === "") {
   console.warn("Must provide FLASHBOTS_KEY_ID and FLASHBOTS_SECRET environment variable. Please see https://hackmd.io/@flashbots/rk-qzgzCD")
   process.exit(1)
-}
+}*/
 
 const HEALTHCHECK_URL = process.env.HEALTHCHECK_URL || ""
 
