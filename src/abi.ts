@@ -21,6 +21,7 @@ export const UNISWAP_QUERY_ABI = [{
 }]
 
 export const BUNDLE_EXECUTOR_ABI = [
+<<<<<<< HEAD
   {
     "inputs": [
       {
@@ -171,6 +172,148 @@ export const BUNDLE_EXECUTOR_ABI = [
     "stateMutability": "payable",
     "type": "receive"
   }
+=======
+	{
+		"inputs": [
+			{
+				"internalType": "contract ILendingPoolAddressesProvider",
+				"name": "_addressProvider",
+				"type": "address"
+			}
+		],
+		"stateMutability": "payable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [],
+		"name": "ADDRESSES_PROVIDER",
+		"outputs": [
+			{
+				"internalType": "contract ILendingPoolAddressesProvider",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "LENDING_POOL",
+		"outputs": [
+			{
+				"internalType": "contract ILendingPool",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "WETH_address",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_value",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "_data",
+				"type": "bytes"
+			}
+		],
+		"name": "call",
+		"outputs": [
+			{
+				"internalType": "bytes",
+				"name": "",
+				"type": "bytes"
+			}
+		],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address[]",
+				"name": "assets",
+				"type": "address[]"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "amounts",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "premiums",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "address",
+				"name": "initiator",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes",
+				"name": "params",
+				"type": "bytes"
+			}
+		],
+		"name": "executeOperation",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amountToBorrow",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "_params",
+				"type": "bytes"
+			}
+		],
+		"name": "flashloan",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"stateMutability": "payable",
+		"type": "receive"
+	}
+>>>>>>> bertmiller/add-flashloan
 ]
 
 

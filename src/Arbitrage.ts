@@ -17,6 +17,10 @@ export type MarketsByToken = { [tokenAddress: string]: Array<EthMarket> }
 
 // TODO: implement binary search (assuming linear/exponential global maximum profitability)
 const TEST_VOLUMES = [
+<<<<<<< HEAD
+=======
+  ETHER.mul(1),
+>>>>>>> bertmiller/add-flashloan
   ETHER.mul(5),
   ETHER.mul(10),
   ETHER.mul(15),
@@ -42,6 +46,10 @@ const TEST_VOLUMES = [
 ]
 
 const flashloanFeePercentage = 9 // (0.09%) or 9/10000
+<<<<<<< HEAD
+=======
+
+>>>>>>> bertmiller/add-flashloan
 export function getBestCrossedMarket(crossedMarkets: Array<EthMarket>[], tokenAddress: string): CrossedMarketDetails | undefined {
   let bestCrossedMarket: CrossedMarketDetails | undefined = undefined;
   for (const crossedMarket of crossedMarkets) {
@@ -128,7 +136,11 @@ export class Arbitrage {
       }
 
       const bestCrossedMarket = getBestCrossedMarket(crossedMarkets, tokenAddress);
+<<<<<<< HEAD
       if (bestCrossedMarket !== undefined && bestCrossedMarket.profit.gt(ETHER.div(100))) {
+=======
+      if (bestCrossedMarket !== undefined && bestCrossedMarket.profit.gt(ETHER.div(50))) {
+>>>>>>> bertmiller/add-flashloan
         bestCrossedMarkets.push(bestCrossedMarket)
       }
     }
@@ -139,12 +151,17 @@ export class Arbitrage {
   // TODO: take more than 1
   async takeCrossedMarkets(bestCrossedMarkets: CrossedMarketDetails[], blockNumber: number, minerRewardPercentage: number): Promise<void> {
     for (const bestCrossedMarket of bestCrossedMarkets) {
+<<<<<<< HEAD
+=======
+
+>>>>>>> bertmiller/add-flashloan
       const buyCalls = await bestCrossedMarket.buyFromMarket.sellTokensToNextMarket(WETH_ADDRESS, bestCrossedMarket.volume, bestCrossedMarket.sellToMarket);
       const inter = bestCrossedMarket.buyFromMarket.getTokensOut(WETH_ADDRESS, bestCrossedMarket.tokenAddress, bestCrossedMarket.volume)
       const sellCallData = await bestCrossedMarket.sellToMarket.sellTokens(bestCrossedMarket.tokenAddress, inter, this.bundleExecutorContract.address);
 
       const targets: Array<string> = [...buyCalls.targets, bestCrossedMarket.sellToMarket.marketAddress]
       const payloads: Array<string> = [...buyCalls.data, sellCallData]
+<<<<<<< HEAD
       const flashloanFee = bestCrossedMarket.volume.mul(flashloanFeePercentage).div(10000);
       if (flashloanFee.lt(bestCrossedMarket.profit)){
         const profitMinusFee = bestCrossedMarket.profit.sub(flashloanFee)
@@ -208,8 +225,71 @@ export class Arbitrage {
       }
 
       return
+=======
+      console.log({targets, payloads})
+      const flashloanFee = bestCrossedMarket.volume.mul(flashloanFeePercentage).div(10000);
+      
+      if (flashloanFee.lt(bestCrossedMarket.profit)){
+        const profitMinusFee = bestCrossedMarket.profit.sub(flashloanFee);
+        const minerReward = profitMinusFee.mul(minerRewardPercentage).div(100);
+        
+        const profitMinusFeeMinusMinerReward = profitMinusFee.sub(minerReward)
+        console.log("Flashloan this much WETH", bestCrossedMarket.volume.toString(), "get this much profit after fees", profitMinusFeeMinusMinerReward.toString())
+
+        const ethersAbiCoder = new utils.AbiCoder()
+        const flashloanParametersTypes = ['uint256', 'address[]', 'bytes[]']
+        const flashloanParamtersInputs = [minerReward.toString(), targets, payloads]
+        const encodedParameters = ethersAbiCoder.encode(flashloanParametersTypes, flashloanParamtersInputs)
+        
+        const transaction = await this.bundleExecutorContract.populateTransaction.flashloan(bestCrossedMarket.volume, encodedParameters, {
+          gasPrice: BigNumber.from(0),
+          gasLimit: BigNumber.from(1000000),
+        });
+
+        try {
+          const estimateGas = await this.bundleExecutorContract.provider.estimateGas(
+            {
+              ...transaction,
+              from: this.executorWallet.address
+            })
+          if (estimateGas.gt(1400000)) {
+            console.log("EstimateGas succeeded, but suspiciously large: " + estimateGas.toString())
+            continue
+          }
+          transaction.gasLimit = estimateGas.mul(2)
+        } catch (e) {
+          console.warn(`Estimate gas failure for ${JSON.stringify(bestCrossedMarket)}`)
+          continue
+        }
+
+        const bundledTransactions = [
+          {
+            signer: this.executorWallet,
+            transaction: transaction
+          }
+        ];
+        console.log(bundledTransactions)
+        const signedBundle = await this.flashbotsProvider.signBundle(bundledTransactions)
+        //
+        const simulation = await this.flashbotsProvider.simulate(signedBundle, blockNumber + 1 )
+        if ("error" in simulation || simulation.firstRevert !== undefined) {
+          console.log(`Simulation Error on token ${bestCrossedMarket.tokenAddress}, skipping`)
+          continue
+        }
+        console.log(`Submitting bundle, profit sent to miner: ${bigNumberToDecimal(simulation.coinbaseDiff)}, effective gas price: ${bigNumberToDecimal(simulation.coinbaseDiff.div(simulation.totalGasUsed), 9)} GWEI`)
+        const bundlePromises =  _.map([blockNumber + 1, blockNumber + 2], targetBlockNumber =>
+          this.flashbotsProvider.sendRawBundle(
+            signedBundle,
+            targetBlockNumber
+          ))
+        await Promise.all(bundlePromises)
+        return
+
+      } else {
+        throw new Error("No arbitrage submitted to relay")
+      }
+>>>>>>> bertmiller/add-flashloan
     }
     throw new Error("No arbitrage submitted to relay")
   }
-
 }

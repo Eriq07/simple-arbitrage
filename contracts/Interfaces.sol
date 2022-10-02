@@ -539,4 +539,8 @@ interface ILendingPool {
   function setPause(bool val) external;
 
   function paused() external view returns (bool);
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> bertmiller/add-flashloan
